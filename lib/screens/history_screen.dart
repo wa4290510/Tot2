@@ -39,7 +39,7 @@ class _HistoryCard extends StatelessWidget {
         child: Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [Expanded(child: Text('فوز ${match.winnerName}', style: const TextStyle(color: AppTheme.navy, fontSize: 18, fontWeight: FontWeight.w800))), Text(date, style: const TextStyle(color: AppTheme.muted, fontSize: 12))]),
           const SizedBox(height: 12),
-          Wrap(spacing: 8, runSpacing: 8, children: match.players.map((player) => Chip(label: Text('${player.name}: ${player.score}'), backgroundColor: AppTheme.navy.withValues(alpha: 0.08), side: BorderSide.none)).toList()),
+          Wrap(spacing: 8, runSpacing: 8, children: match.players.map((player) => Chip(label: Text('${player.name}: ${player.score}'), backgroundColor: AppTheme.navy.withOpacity(0.08), side: BorderSide.none)).toList()),
           const Divider(height: 22),
           Row(children: [Text('حد الفوز ${match.targetScore}', style: const TextStyle(color: AppTheme.muted, fontSize: 12)), const Spacer(), IconButton(onPressed: () => shareMatch(match), tooltip: 'مشاركة', icon: const Icon(Icons.ios_share, color: AppTheme.orange)), IconButton(onPressed: () => context.read<MatchStore>().remove(match.id), tooltip: 'حذف', icon: const Icon(Icons.delete_outline, color: Colors.redAccent))]),
         ])),

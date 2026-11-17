@@ -26,7 +26,7 @@ class ScoreCard extends StatelessWidget {
       duration: const Duration(milliseconds: 220),
       padding: const EdgeInsets.fromLTRB(18, 18, 14, 14),
       decoration: BoxDecoration(
-        color: isWinner ? AppTheme.green.withValues(alpha: 0.18) : AppTheme.ivory,
+        color: isWinner ? AppTheme.green.withOpacity(0.18) : AppTheme.ivory,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: isWinner ? AppTheme.green : Colors.transparent, width: 2),
         boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 18, offset: Offset(0, 8))],
@@ -46,9 +46,9 @@ class ScoreCard extends StatelessWidget {
             FilledButton(onPressed: onIncrease, style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14)), child: const Text('+1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900))),
           ]),
           const SizedBox(height: 10),
-          ClipRRect(borderRadius: BorderRadius.circular(9), child: LinearProgressIndicator(value: progress, minHeight: 7, backgroundColor: AppTheme.navy.withValues(alpha: 0.1), valueColor: const AlwaysStoppedAnimation(AppTheme.orange))),
+          ClipRRect(borderRadius: BorderRadius.circular(9), child: LinearProgressIndicator(value: progress, minHeight: 7, backgroundColor: AppTheme.navy.withOpacity(0.1), valueColor: const AlwaysStoppedAnimation(AppTheme.orange))),
           const SizedBox(height: 6),
-          Text('$score / $target نقطة', textAlign: TextAlign.end, style: TextStyle(color: isWinner ? AppTheme.ivory.withValues(alpha: 0.7) : AppTheme.navy.withValues(alpha: 0.6), fontSize: 12, fontWeight: FontWeight.w600)),
+          Text('$score / $target نقطة', textAlign: TextAlign.end, style: TextStyle(color: isWinner ? AppTheme.ivory.withOpacity(0.7) : AppTheme.navy.withOpacity(0.6), fontSize: 12, fontWeight: FontWeight.w600)),
         ],
       ),
     );

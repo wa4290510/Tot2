@@ -11,7 +11,7 @@ class AppNav extends StatelessWidget {
         selectedIndex: index,
         onDestinationSelected: onChanged,
         backgroundColor: AppTheme.navyLight,
-        indicatorColor: AppTheme.orange.withValues(alpha: 0.18),
+        indicatorColor: AppTheme.orange.withOpacity(0.18),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.sports_score_outlined), selectedIcon: Icon(Icons.sports_score), label: 'المباراة'),
           NavigationDestination(icon: Icon(Icons.history_outlined), selectedIcon: Icon(Icons.history), label: 'السجل'),

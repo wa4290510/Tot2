@@ -28,6 +28,9 @@ jobs:
       - name: Generate Android project files
         run: flutter create --platforms=android --project-name match_score .
 
+      - name: Remove generated sample test
+        run: rm -f test/widget_test.dart
+
       - name: Install dependencies
         run: flutter pub get
 

@@ -25,7 +25,7 @@ class AppTheme {
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: ivory.withValues(alpha: 0.08),
+          fillColor: ivory.withOpacity(0.08),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,

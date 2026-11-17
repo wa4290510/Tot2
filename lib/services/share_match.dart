@@ -7,8 +7,8 @@ String matchSummary(MatchRecord match) {
 }
 
 Future<void> shareMatch(MatchRecord match) async {
-  await SharePlus.instance.share(ShareParams(
-    text: matchSummary(match),
+  await Share.share(
+    matchSummary(match),
     subject: 'نتيجة مباراة ${match.winnerName}',
-  ));
+  );
 }

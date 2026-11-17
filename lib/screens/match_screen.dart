@@ -18,7 +18,7 @@ class _MatchScreenState extends State<MatchScreen> {
   bool _started = false;
   DateTime? _startedAt;
   List<Player> _players = const [];
-  final _nameControllers = List.generate(4, TextEditingController.new);
+  final _nameControllers = List.generate(4, (_) => TextEditingController());
 
   @override
   void dispose() {
@@ -145,7 +145,7 @@ class _MatchScreenState extends State<MatchScreen> {
           const SizedBox(height: 14),
         ],
         const SizedBox(height: 10),
-        OutlinedButton.icon(onPressed: () => setState(() => _started = false), icon: const Icon(Icons.refresh), label: const Text('مباراة جديدة'), style: OutlinedButton.styleFrom(foregroundColor: AppTheme.ivory, side: BorderSide(color: AppTheme.ivory.withValues(alpha: 0.3)), padding: const EdgeInsets.symmetric(vertical: 15))),
+        OutlinedButton.icon(onPressed: () => setState(() => _started = false), icon: const Icon(Icons.refresh), label: const Text('مباراة جديدة'), style: OutlinedButton.styleFrom(foregroundColor: AppTheme.ivory, side: BorderSide(color: AppTheme.ivory.withOpacity(0.3)), padding: const EdgeInsets.symmetric(vertical: 15))),
       ];
 
   Widget _sectionLabel(String text) => Text(text, style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700));
