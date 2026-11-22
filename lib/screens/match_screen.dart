@@ -79,7 +79,7 @@ class _MatchScreenState extends State<MatchScreen> {
     final record = MatchRecord(id: DateTime.now().microsecondsSinceEpoch.toString(), teams: _teams, rounds: _rounds, targetScore: _target, startedAt: _startedAt ?? DateTime.now(), finishedAt: DateTime.now(), winnerName: _teams[winnerIndex].name);
     await context.read<MatchStore>().add(record);
     _confetti.play();
-    try { await _audio.play(AssetSource('audio/winner.wav')); } catch (_) {}
+    try { await _audio.play(AssetSource('audio/winner.mp3')); } catch (_) {}
     if (!mounted) return;
     await showDialog<void>(context: context, barrierDismissible: false, builder: (_) => _WinnerDialog(team: record.winnerName, confetti: _confetti));
     if (mounted) setState(() => _started = false);
