@@ -90,7 +90,9 @@ class _MatchScreenState extends State<MatchScreen> {
     setState(() {
       _started = false;
       _playerTeams.clear();
-      for (final controller in _memberControllers) controller.clear();
+      for (final controller in _memberControllers) {
+        controller.clear();
+      }
     });
   }
 
