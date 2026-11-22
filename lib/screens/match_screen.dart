@@ -76,13 +76,22 @@ class _MatchScreenState extends State<MatchScreen> {
   }
 
   Future<void> _finishMatch(int winnerIndex) async {
+    final winner = _teams[winnerIndex];
     final record = MatchRecord(id: DateTime.now().microsecondsSinceEpoch.toString(), teams: _teams, rounds: _rounds, targetScore: _target, startedAt: _startedAt ?? DateTime.now(), finishedAt: DateTime.now(), winnerName: _teams[winnerIndex].name);
     await context.read<MatchStore>().add(record);
     _confetti.play();
     try { await _audio.play(AssetSource('audio/winner.mp3')); } catch (_) {}
     if (!mounted) return;
-    await showDialog<void>(context: context, barrierDismissible: false, builder: (_) => _WinnerDialog(team: record.winnerName, confetti: _confetti));
-    if (mounted) setState(() => _started = false);
+    await showDialog<void>(context: context, barrierDismissible: false, builder: (_) => _WinnerDialog(team: record.winnerName, members: winner.members, confetti: _confetti));
+    if (mounted) _newMatch();
+  }
+
+  void _newMatch() {
+    setState(() {
+      _started = false;
+      _playerTeams.clear();
+      for (final controller in _memberControllers) controller.clear();
+    });
   }
 
   void _toast(String message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
@@ -127,7 +136,7 @@ class _MatchScreenState extends State<MatchScreen> {
   List<Widget> _scoreContent() => [
         Row(children: [const Icon(Icons.flag_outlined, color: AppTheme.orange), const SizedBox(width: 8), Text('الفوز عند $_target نقطة • الجولة ${_rounds.length + 1}', style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700))]),
         const SizedBox(height: 14),
-        for (var i = 0; i < _teams.length; i++) ...[TeamScoreCard(team: _teams[i].name, members: _teams[i].members, score: _teams[i].totalScore, target: _target, accent: i == 0 ? const Color(0xFFBDEBFF) : const Color(0xFFC7F7E7), selected: _selectedTeam == i, onSelect: () => setState(() => _selectedTeam = i)), const SizedBox(height: 13)],
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [for (var i = 0; i < _teams.length; i++) Expanded(child: Padding(padding: EdgeInsetsDirectional.only(end: i == 0 ? 6 : 0, start: i == 1 ? 6 : 0), child: TeamScoreCard(team: _teams[i].name, members: _teams[i].members, score: _teams[i].totalScore, target: _target, accent: i == 0 ? const Color(0xFFBDEBFF) : const Color(0xFFC7F7E7), selected: _selectedTeam == i, onSelect: () => setState(() => _selectedTeam = i))))]),
         const SizedBox(height: 6),
         const Text('اختار عدد النقاط المضافة', style: TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),
@@ -137,15 +146,16 @@ class _MatchScreenState extends State<MatchScreen> {
         const SizedBox(height: 18),
         if (_rounds.isNotEmpty) ...[_label('تفاصيل الجولات'), const SizedBox(height: 7), ..._rounds.reversed.map((round) => ListTile(dense: true, tileColor: AppTheme.navyLight, leading: CircleAvatar(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy, child: Text('${round.round}')), title: Text(round.teamName, style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700)), trailing: Text('+${round.points}', style: const TextStyle(color: AppTheme.orange, fontSize: 19, fontWeight: FontWeight.w900))))],
         const SizedBox(height: 18),
-        OutlinedButton.icon(onPressed: () => setState(() => _started = false), icon: const Icon(Icons.refresh), label: const Text('مباراة جديدة'), style: OutlinedButton.styleFrom(foregroundColor: AppTheme.ivory, side: BorderSide(color: AppTheme.ivory.withOpacity(.3)), padding: const EdgeInsets.symmetric(vertical: 15))),
+        OutlinedButton.icon(onPressed: _newMatch, icon: const Icon(Icons.refresh), label: const Text('مباراة جديدة'), style: OutlinedButton.styleFrom(foregroundColor: AppTheme.ivory, side: BorderSide(color: AppTheme.ivory.withOpacity(.3)), padding: const EdgeInsets.symmetric(vertical: 15))),
       ];
 
   Widget _label(String value) => Text(value, style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w800));
 }
 
 class _WinnerDialog extends StatelessWidget {
-  const _WinnerDialog({required this.team, required this.confetti});
+  const _WinnerDialog({required this.team, required this.members, required this.confetti});
   final String team;
+  final List<String> members;
   final ConfettiController confetti;
   @override
   Widget build(BuildContext context) => Dialog(
@@ -158,6 +168,8 @@ class _WinnerDialog extends StatelessWidget {
               const Text('والله وعملوها الرجالة!', textAlign: TextAlign.center, style: TextStyle(color: AppTheme.orange, fontSize: 25, fontWeight: FontWeight.w900)),
               const SizedBox(height: 12),
               Text('مبروك الفوز لـ $team', textAlign: TextAlign.center, style: const TextStyle(color: AppTheme.ivory, fontSize: 20, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 8),
+              Text(members.join('، '), textAlign: TextAlign.center, style: const TextStyle(color: AppTheme.orange, fontSize: 17, fontWeight: FontWeight.w700)),
               const SizedBox(height: 22),
               FilledButton(onPressed: () => Navigator.pop(context), style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy), child: const Text('تمام')),
             ]),
