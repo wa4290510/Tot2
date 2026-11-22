@@ -15,8 +15,14 @@ class MatchScreen extends StatefulWidget {
 }
 
 class _MatchScreenState extends State<MatchScreen> {
+  static const _defaultPlayers = [
+    'احمد فتحي', 'د.شريف كرشه', 'د. عصام', 'عبد الله اشرف',
+    'وليد عجمي', 'الحاج ابراهيم', 'الحاج درويش', 'م. احمد ريحان',
+    'ا.اواب شعبان', 'م.عمر هيبه', 'د.محمود عباس', 'ا.وائل الصاوي',
+    'يوسف', 'حسن', 'سامر', 'حسين',
+  ];
   final _teamNames = [TextEditingController(text: 'فريق ١'), TextEditingController(text: 'فريق ٢')];
-  final _groupController = TextEditingController();
+  final _groupController = TextEditingController(text: _defaultPlayers.join('\n'));
   final _memberControllers = [TextEditingController(), TextEditingController()];
   final _playerTeams = <String, int>{};
   final _audio = AudioPlayer();
@@ -47,6 +53,10 @@ class _MatchScreenState extends State<MatchScreen> {
       return;
     }
     final members = [for (var i = 0; i < 2; i++) _memberControllers[i].text.split(RegExp(r'[\n,،;؛]+')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList()];
+    if (members.any((team) => team.isEmpty || team.length > 2)) {
+      _toast('اختار لاعبًا واحدًا أو لاعبين فقط لكل فريق');
+      return;
+    }
     setState(() {
       _teams = [Team(name: names[0], members: members[0]), Team(name: names[1], members: members[1])];
       _rounds = const [];
@@ -86,14 +96,14 @@ class _MatchScreenState extends State<MatchScreen> {
   List<Widget> _setupContent() => [
         const Text('اختار الفرق', style: TextStyle(color: AppTheme.ivory, fontSize: 25, fontWeight: FontWeight.w900)),
         const SizedBox(height: 6),
-        const Text('الصق أسماء جروب واتساب أو اكتب أسماء اللاعبين يدويًا، ثم وزّعهم على الفريقين.', style: TextStyle(color: AppTheme.muted, fontSize: 14)),
+        const Text('الأسماء الافتراضية جاهزة. اختار لاعبًا أو لاعبين لكل فريق، أو عدّل القائمة والصق أسماء جروب واتساب.', style: TextStyle(color: AppTheme.muted, fontSize: 14)),
         const SizedBox(height: 20),
         _label('أسماء المجموعة من واتساب'),
         const SizedBox(height: 8),
         TextField(controller: _groupController, minLines: 3, maxLines: 6, onChanged: (_) => setState(() {}), textDirection: TextDirection.rtl, decoration: const InputDecoration(hintText: 'انسخ الأسماء من واتساب والصقها هنا، كل اسم في سطر')),
         if (_groupNames.isNotEmpty) ...[
           const SizedBox(height: 12),
-          const Text('توزيع الأسماء على الفرق', style: TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w800)),
+        const Text('توزيع الأسماء على الفرق — لاعب أو لاعبان لكل فريق', style: TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
           ..._groupNames.map((name) => _memberAssignment(name)),
         ],
@@ -112,12 +122,12 @@ class _MatchScreenState extends State<MatchScreen> {
         SizedBox(height: 56, child: FilledButton.icon(onPressed: _startMatch, icon: const Icon(Icons.play_arrow_rounded), label: const Text('ابدأ المباراة', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)), style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18))))),
       ];
 
-  Widget _memberAssignment(String name) => Card(color: AppTheme.navyLight, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), child: Row(children: [Expanded(child: Text(name, style: const TextStyle(color: AppTheme.ivory))), DropdownButton<int>(value: _playerTeams[name], hint: const Text('اختار الفريق', style: TextStyle(color: AppTheme.muted)), dropdownColor: AppTheme.navyLight, items: const [DropdownMenuItem(value: 0, child: Text('فريق ١')), DropdownMenuItem(value: 1, child: Text('فريق ٢'))], onChanged: (value) { if (value == null) return; setState(() { _playerTeams[name] = value; for (var i = 0; i < 2; i++) { final names = _groupNames.where((n) => _playerTeams[n] == i).toList(); _memberControllers[i].text = names.join('\n'); } }); })])));
+  Widget _memberAssignment(String name) => Card(color: AppTheme.navyLight, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), child: Row(children: [Expanded(child: Text(name, style: const TextStyle(color: AppTheme.ivory))), DropdownButton<int>(value: _playerTeams[name], hint: const Text('اختار الفريق', style: TextStyle(color: AppTheme.muted)), dropdownColor: AppTheme.navyLight, items: const [DropdownMenuItem(value: 0, child: Text('فريق ١')), DropdownMenuItem(value: 1, child: Text('فريق ٢'))], onChanged: (value) { if (value == null) return; final oldTeam = _playerTeams[name]; final alreadyInTeam = _groupNames.where((n) => _playerTeams[n] == value && n != name).length; if (alreadyInTeam >= 2) { _toast('كل فريق يمكنه اختيار لاعب أو لاعبين فقط'); return; } setState(() { _playerTeams[name] = value; for (var i = 0; i < 2; i++) { final names = _groupNames.where((n) => _playerTeams[n] == i).toList(); _memberControllers[i].text = names.join('\n'); } if (oldTeam != null && oldTeam != value) { _memberControllers[oldTeam].text = _groupNames.where((n) => _playerTeams[n] == oldTeam).join('\n'); } }); })])));
 
   List<Widget> _scoreContent() => [
         Row(children: [const Icon(Icons.flag_outlined, color: AppTheme.orange), const SizedBox(width: 8), Text('الفوز عند $_target نقطة • الجولة ${_rounds.length + 1}', style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700))]),
         const SizedBox(height: 14),
-        for (var i = 0; i < _teams.length; i++) ...[TeamScoreCard(team: _teams[i].name, members: _teams[i].members, score: _teams[i].totalScore, target: _target, selected: _selectedTeam == i, onSelect: () => setState(() => _selectedTeam = i)), const SizedBox(height: 13)],
+        for (var i = 0; i < _teams.length; i++) ...[TeamScoreCard(team: _teams[i].name, members: _teams[i].members, score: _teams[i].totalScore, target: _target, accent: i == 0 ? const Color(0xFFBDEBFF) : const Color(0xFFC7F7E7), selected: _selectedTeam == i, onSelect: () => setState(() => _selectedTeam = i)), const SizedBox(height: 13)],
         const SizedBox(height: 6),
         const Text('اختار عدد النقاط المضافة', style: TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w800)),
         const SizedBox(height: 8),

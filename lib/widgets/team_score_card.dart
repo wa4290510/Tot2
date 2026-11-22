@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 class TeamScoreCard extends StatelessWidget {
-  const TeamScoreCard({super.key, required this.team, required this.members, required this.score, required this.target, required this.selected, required this.onSelect});
+  const TeamScoreCard({super.key, required this.team, required this.members, required this.score, required this.target, required this.accent, required this.selected, required this.onSelect});
   final String team;
   final List<String> members;
   final int score;
   final int target;
+  final Color accent;
   final bool selected;
   final VoidCallback onSelect;
   @override
@@ -17,7 +18,7 @@ class TeamScoreCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(color: selected ? AppTheme.orange : AppTheme.ivory, borderRadius: BorderRadius.circular(24), border: Border.all(color: selected ? AppTheme.orange : Colors.transparent, width: 2), boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 16, offset: Offset(0, 7))]),
+        decoration: BoxDecoration(color: selected ? accent : AppTheme.ivory, borderRadius: BorderRadius.circular(24), border: Border.all(color: selected ? accent : Colors.transparent, width: 2), boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 16, offset: Offset(0, 7))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [Expanded(child: Text(team, style: TextStyle(color: selected ? AppTheme.navy : AppTheme.navy, fontSize: 21, fontWeight: FontWeight.w900))), if (selected) const Icon(Icons.touch_app, color: AppTheme.navy)]),
           const SizedBox(height: 5),
