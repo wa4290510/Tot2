@@ -23,7 +23,7 @@ class TeamScoreCard extends StatelessWidget {
           const SizedBox(height: 5),
           Text(members.isEmpty ? 'بدون أعضاء مسجلين' : members.join('، '), style: TextStyle(color: AppTheme.navy.withOpacity(.65), fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
           const SizedBox(height: 12),
-          Text('$score', style: TextStyle(color: AppTheme.navy, fontSize: 58, height: .95, fontWeight: FontWeight.w900)),
+          Text('$score', style: const TextStyle(color: AppTheme.navy, fontSize: 58, height: .95, fontWeight: FontWeight.w900)),
           const SizedBox(height: 10),
           ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: progress, minHeight: 8, backgroundColor: AppTheme.navy.withOpacity(.12), valueColor: AlwaysStoppedAnimation(selected ? AppTheme.navy : AppTheme.orange))),
           const SizedBox(height: 7),

@@ -32,7 +32,9 @@ class _MatchScreenState extends State<MatchScreen> {
 
   @override
   void dispose() {
-    for (final c in [..._teamNames, ..._memberControllers, _groupController]) c.dispose();
+    for (final c in [..._teamNames, ..._memberControllers, _groupController]) {
+      c.dispose();
+    }
     _audio.dispose();
     _confetti.dispose();
     super.dispose();
@@ -136,5 +138,21 @@ class _WinnerDialog extends StatelessWidget {
   final String team;
   final ConfettiController confetti;
   @override
-  Widget build(BuildContext context) => Dialog(backgroundColor: AppTheme.navyLight, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)), child: Stack(alignment: Alignment.center, children: [Padding(padding: const EdgeInsets.fromLTRB(24, 42, 24, 20), child: Column(mainAxisSize: MainAxisSize.min, children: [const Text('والله وعملوها الرجالة!', textAlign: TextAlign.center, style: TextStyle(color: AppTheme.orange, fontSize: 25, fontWeight: FontWeight.w900)), const SizedBox(height: 12), Text('مبروك الفوز لـ $team', textAlign: TextAlign.center, style: const TextStyle(color: AppTheme.ivory, fontSize: 20, fontWeight: FontWeight.w800)), const SizedBox(height: 22), FilledButton(onPressed: () => Navigator.pop(context), style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy), child: const Text('تمام'))])), ConfettiWidget(confettiController: confetti, blastDirectionality: BlastDirectionality.explosive, shouldLoop: false, numberOfParticles: 35, colors: const [Colors.orange, Colors.yellow, Colors.blue, Colors.pink, Colors.green])]);
+  Widget build(BuildContext context) => Dialog(
+        backgroundColor: AppTheme.navyLight,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        child: Stack(alignment: Alignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 42, 24, 20),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              const Text('والله وعملوها الرجالة!', textAlign: TextAlign.center, style: TextStyle(color: AppTheme.orange, fontSize: 25, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 12),
+              Text('مبروك الفوز لـ $team', textAlign: TextAlign.center, style: const TextStyle(color: AppTheme.ivory, fontSize: 20, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 22),
+              FilledButton(onPressed: () => Navigator.pop(context), style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy), child: const Text('تمام')),
+            ]),
+          ),
+          ConfettiWidget(confettiController: confetti, blastDirectionality: BlastDirectionality.explosive, shouldLoop: false, numberOfParticles: 35, colors: const [Colors.orange, Colors.yellow, Colors.blue, Colors.pink, Colors.green]),
+        ]),
+      );
 }
