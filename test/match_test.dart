@@ -1,26 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:match_score/models/match.dart';
-
 void main() {
-  test('player serializes and restores its score', () {
-    const player = Player(name: 'أحمد', score: 7);
-    final restored = Player.fromJson(player.toJson());
-    expect(restored.name, 'أحمد');
-    expect(restored.score, 7);
+  test('team serializes members and score', () {
+    const team = Team(name: 'الرجالة', members: ['أحمد', 'علي'], totalScore: 7, roundScores: [3, 4]);
+    final restored = Team.fromJson(team.toJson());
+    expect(restored.name, 'الرجالة');
+    expect(restored.members, ['أحمد', 'علي']);
+    expect(restored.totalScore, 7);
+    expect(restored.roundScores, [3, 4]);
   });
-
-  test('match record preserves players and winner', () {
-    final record = MatchRecord(
-      id: '1',
-      players: const [Player(name: 'أحمد', score: 10), Player(name: 'علي', score: 4)],
-      targetScore: 10,
-      startedAt: DateTime(2026, 1, 1),
-      finishedAt: DateTime(2026, 1, 1, 12),
-      winnerName: 'أحمد',
-    );
+  test('match record preserves rounds and winner', () {
+    final record = MatchRecord(id: '1', teams: const [Team(name: 'أبطال', totalScore: 10), Team(name: 'منافسون', totalScore: 4)], rounds: const [RoundScore(round: 1, teamName: 'أبطال', points: 10)], startedAt: DateTime(2026, 1, 1), finishedAt: DateTime(2026, 1, 1, 12), winnerName: 'أبطال');
     final restored = MatchRecord.fromJson(record.toJson());
-    expect(restored.players.length, 2);
-    expect(restored.winnerName, 'أحمد');
-    expect(restored.targetScore, 10);
+    expect(restored.teams.length, 2);
+    expect(restored.rounds.single.points, 10);
+    expect(restored.winnerName, 'أبطال');
   });
 }
