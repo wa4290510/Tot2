@@ -85,7 +85,7 @@ class _MatchScreenState extends State<MatchScreen> {
     final teams = [
       for (final team in _teams)
         team.copyWith(
-          totalScore: rounds.where((round) => round.teamName == team.name).fold(0, (sum, round) => sum + round.points),
+          totalScore: rounds.where((round) => round.teamName == team.name).fold<int>(0, (sum, round) => sum + round.points),
           roundScores: rounds.where((round) => round.teamName == team.name).map((round) => round.points).toList(),
         ),
     ];
