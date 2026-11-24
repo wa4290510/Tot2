@@ -52,15 +52,24 @@ class _EditScoreDialog extends StatefulWidget {
 class _EditScoreDialogState extends State<_EditScoreDialog> {
   late final List<TextEditingController> _controllers = [for (final team in widget.match.teams) TextEditingController(text: '${team.totalScore}')];
   @override
-  void dispose() { for (final controller in _controllers) controller.dispose(); super.dispose(); }
+  void dispose() {
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   void _save() {
-    final scores = _controllers.map((controller) => int.tryParse(controller.text.trim())).toList();
-    if (scores.any((score) => score == null || score! < 0)) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('اكتب نقاط صحيحة أكبر من أو تساوي صفر')));
-      return;
+    final scores = <int>[];
+    for (final controller in _controllers) {
+      final score = int.tryParse(controller.text.trim());
+      if (score == null || score < 0) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('اكتب نقاط صحيحة أكبر من أو تساوي صفر')));
+        return;
+      }
+      scores.add(score);
     }
-    final teams = [for (var i = 0; i < widget.match.teams.length; i++) widget.match.teams[i].copyWith(totalScore: scores[i]!)];
+    final teams = [for (var i = 0; i < widget.match.teams.length; i++) widget.match.teams[i].copyWith(totalScore: scores[i])];
     var winnerIndex = 0;
     for (var i = 1; i < teams.length; i++) {
       if (teams[i].totalScore > teams[winnerIndex].totalScore) winnerIndex = i;
