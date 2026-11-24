@@ -75,6 +75,26 @@ class _MatchScreenState extends State<MatchScreen> {
     if (updated.totalScore >= _target) await _finishMatch(_selectedTeam);
   }
 
+  void _removeRound(int roundIndex) {
+    if (roundIndex < 0 || roundIndex >= _rounds.length) return;
+    final remaining = [..._rounds]..removeAt(roundIndex);
+    final rounds = [
+      for (var i = 0; i < remaining.length; i++)
+        RoundScore(round: i + 1, teamName: remaining[i].teamName, points: remaining[i].points),
+    ];
+    final teams = [
+      for (final team in _teams)
+        team.copyWith(
+          totalScore: rounds.where((round) => round.teamName == team.name).fold(0, (sum, round) => sum + round.points),
+          roundScores: rounds.where((round) => round.teamName == team.name).map((round) => round.points).toList(),
+        ),
+    ];
+    setState(() {
+      _rounds = rounds;
+      _teams = teams;
+    });
+  }
+
   Future<void> _finishMatch(int winnerIndex) async {
     final winner = _teams[winnerIndex];
     final record = MatchRecord(id: DateTime.now().microsecondsSinceEpoch.toString(), teams: _teams, rounds: _rounds, targetScore: _target, startedAt: _startedAt ?? DateTime.now(), finishedAt: DateTime.now(), winnerName: _teams[winnerIndex].name);
@@ -146,7 +166,24 @@ class _MatchScreenState extends State<MatchScreen> {
         const SizedBox(height: 14),
         SizedBox(height: 54, child: FilledButton.icon(onPressed: _addRound, icon: const Icon(Icons.add_circle_outline), label: Text('أضف $_selectedPoints نقطة إلى ${_teams[_selectedTeam].name}'), style: FilledButton.styleFrom(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy))),
         const SizedBox(height: 18),
-        if (_rounds.isNotEmpty) ...[_label('تفاصيل الجولات'), const SizedBox(height: 7), ..._rounds.reversed.map((round) => ListTile(dense: true, tileColor: AppTheme.navyLight, leading: CircleAvatar(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy, child: Text('${round.round}')), title: Text(round.teamName, style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700)), trailing: Text('+${round.points}', style: const TextStyle(color: AppTheme.orange, fontSize: 19, fontWeight: FontWeight.w900))))],
+        if (_rounds.isNotEmpty) ...[
+          _label('تفاصيل الجولات — اضغط سلة المهملات لمسح جولة'),
+          const SizedBox(height: 7),
+          ..._rounds.asMap().entries.toList().reversed.map((entry) {
+            final index = entry.key;
+            final round = entry.value;
+            return ListTile(
+              dense: true,
+              tileColor: AppTheme.navyLight,
+              leading: CircleAvatar(backgroundColor: AppTheme.orange, foregroundColor: AppTheme.navy, child: Text('${round.round}')),
+              title: Text(round.teamName, style: const TextStyle(color: AppTheme.ivory, fontWeight: FontWeight.w700)),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                Text('+${round.points}', style: const TextStyle(color: AppTheme.orange, fontSize: 19, fontWeight: FontWeight.w900)),
+                IconButton(onPressed: () => _removeRound(index), tooltip: 'مسح الجولة', icon: const Icon(Icons.delete_outline, color: Colors.redAccent)),
+              ]),
+            );
+          }),
+        ],
         const SizedBox(height: 18),
         OutlinedButton.icon(onPressed: _newMatch, icon: const Icon(Icons.refresh), label: const Text('مباراة جديدة'), style: OutlinedButton.styleFrom(foregroundColor: AppTheme.ivory, side: BorderSide(color: AppTheme.ivory.withOpacity(.3)), padding: const EdgeInsets.symmetric(vertical: 15))),
       ];
