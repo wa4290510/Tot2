@@ -16,4 +16,10 @@ void main() {
     expect(restored.rounds.single.points, 10);
     expect(restored.winnerName, 'أبطال');
   });
+  test('match record can update final team scores', () {
+    final record = MatchRecord(id: '2', teams: const [Team(name: 'أبطال', totalScore: 10), Team(name: 'منافسون', totalScore: 4)], rounds: const [], startedAt: DateTime(2026, 1, 1), finishedAt: DateTime(2026, 1, 1), winnerName: 'أبطال');
+    final edited = record.copyWith(teams: [record.teams[0], record.teams[1].copyWith(totalScore: 12)], winnerName: 'منافسون');
+    expect(edited.teams[1].totalScore, 12);
+    expect(edited.winnerName, 'منافسون');
+  });
 }

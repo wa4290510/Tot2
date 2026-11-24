@@ -41,6 +41,15 @@ class MatchRecord {
   final DateTime finishedAt;
   final String winnerName;
   final int targetScore;
+  MatchRecord copyWith({List<Team>? teams, String? winnerName}) => MatchRecord(
+        id: id,
+        teams: teams ?? this.teams,
+        rounds: rounds,
+        startedAt: startedAt,
+        finishedAt: finishedAt,
+        winnerName: winnerName ?? this.winnerName,
+        targetScore: targetScore,
+      );
   Map<String, dynamic> toJson() => {
         'id': id,
         'teams': teams.map((team) => team.toJson()).toList(),

@@ -29,6 +29,14 @@ class MatchStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> update(MatchRecord record) async {
+    final index = _history.indexWhere((item) => item.id == record.id);
+    if (index == -1) return;
+    _history[index] = record;
+    await _persist();
+    notifyListeners();
+  }
+
   Future<void> clear() async {
     _history.clear();
     await _persist();
